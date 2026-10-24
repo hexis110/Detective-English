@@ -1,0 +1,745 @@
+<title>The Vanishing Satay Recipe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: a single case file on the desk — tabbed by act, one evidence card at a time, hawker-signage headings over a cool grey-green file folder. */
+:root{
+  --desk:#dfe5df;        /* the desk the folder sits on */
+  --paper:#f7f9f6;       /* case-file paper */
+  --ink:#1b2730;         /* typed text */
+  --ink-2:#4c5a63;       /* pencil notes */
+  --rule:#c5cfc8;        /* folder lines */
+  --tag:#f2c230;         /* evidence-tag yellow */
+  --tag-ink:#2a2200;
+  --good:#1f7a4d;
+  --good-bg:#dff1e6;
+  --bad:#b8352a;
+  --bad-bg:#f8e1de;
+  --focus:#1d5fd1;
+  --display:"Big Shoulders Display","Arial Narrow",Impact,sans-serif;
+  --body:"Atkinson Hyperlegible",Verdana,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --desk:#141b1f;--paper:#1e282d;--ink:#e6ece8;--ink-2:#a4b2ac;--rule:#34434a;
+  --tag:#f2c230;--tag-ink:#2a2200;--good:#5fd39a;--good-bg:#173628;--bad:#ff8a7d;--bad-bg:#3d1e1b;--focus:#7fb0ff;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#141b1f;--paper:#1e282d;--ink:#e6ece8;--ink-2:#a4b2ac;--rule:#34434a;
+  --tag:#f2c230;--tag-ink:#2a2200;--good:#5fd39a;--good-bg:#173628;--bad:#ff8a7d;--bad-bg:#3d1e1b;--focus:#7fb0ff;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--desk);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px}
+.agency{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2)}
+.rep{font-family:var(--mono);font-size:13px;display:flex;gap:12px;align-items:center;font-variant-numeric:tabular-nums}
+.rep b{background:var(--tag);color:var(--tag-ink);padding:2px 8px;border-radius:3px}
+nav.acts{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+nav.acts span{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:8px 6px 6px;border-radius:6px 6px 0 0;
+  background:var(--paper);color:var(--ink-2);opacity:.55;text-align:center;border-bottom:3px solid transparent;min-width:0;overflow-wrap:anywhere}
+nav.acts span.on{opacity:1;color:var(--ink);border-bottom-color:var(--tag);font-weight:600}
+nav.acts span.done{opacity:.85}
+.file{background:var(--paper);border-radius:0 0 10px 10px;padding:24px clamp(16px,4vw,36px) 28px;box-shadow:0 1px 0 var(--rule),0 12px 30px -18px rgba(0,0,0,.35);
+  display:flex;flex-direction:column;gap:18px;min-width:0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+h1,h2{font-family:var(--display);font-weight:800;letter-spacing:.01em;line-height:1.02;margin:0;text-wrap:balance;text-transform:uppercase}
+h1{font-size:clamp(40px,9vw,68px)}
+h2{font-size:clamp(30px,6vw,42px)}
+h3{font-family:var(--body);font-size:17px;margin:0}
+p{margin:0;max-width:65ch}
+.wren{border-left:4px solid var(--tag);padding:4px 0 4px 14px;display:flex;flex-direction:column;gap:8px}
+.wren .who{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2)}
+.task{font-family:var(--mono);font-size:12.5px;display:inline-flex;gap:8px;align-items:center;color:var(--ink-2)}
+.task i{font-style:normal;background:var(--ink);color:var(--paper);padding:2px 7px;border-radius:3px;letter-spacing:.04em}
+.q{display:flex;flex-direction:column;gap:10px;padding-top:14px;border-top:1px dashed var(--rule)}
+.q .stem{font-weight:700}
+.opts{display:grid;gap:8px}
+.opt{font:inherit;text-align:left;padding:10px 14px;border-radius:8px;border:1.5px solid var(--rule);background:transparent;color:var(--ink);cursor:pointer}
+.opt:hover{border-color:var(--ink-2)}
+.opt.right{border-color:var(--good);background:var(--good-bg);font-weight:700}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg);text-decoration:line-through}
+.opt:disabled{cursor:default}
+.hint{font-size:15px;color:var(--bad);background:var(--bad-bg);padding:8px 12px;border-radius:6px}
+.hint.ok{color:var(--good);background:var(--good-bg)}
+button,.btn{font:inherit}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;border:0;background:var(--ink);color:var(--paper);font-weight:700;cursor:pointer}
+.btn.tag{background:var(--tag);color:var(--tag-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.end{justify-content:flex-end}
+input[type=text],textarea,select{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--rule);border-radius:6px;padding:8px 10px;max-width:100%}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--ink-2)}
+.mark-right{border-color:var(--good)!important;background:var(--good-bg)!important}
+.mark-wrong{border-color:var(--bad)!important;background:var(--bad-bg)!important}
+
+/* Documents found at the scene */
+.doc{background:#fffdf3;color:#2a2a22;border-radius:4px;padding:20px 22px;box-shadow:0 2px 0 #d9d3b8, 0 10px 22px -14px rgba(0,0,0,.45);line-height:2.1;transform:rotate(-.4deg)}
+.doc .head{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:#6b6650;line-height:1.5;margin-bottom:8px}
+.doc select{background:#fff;color:#2a2a22;border-color:#c9c2a2;padding:2px 6px;font-size:16px}
+.doc .ed{display:inline-flex;flex-direction:column;vertical-align:top;line-height:1.3;margin:0 2px}
+.doc .ed u{text-decoration-thickness:2px;text-underline-offset:3px;font-weight:700}
+.doc .ed input{width:9.5em;padding:3px 6px;font-size:15px;background:#fff;color:#2a2a22;border-color:#c9c2a2}
+.doc .num{font-family:var(--mono);font-size:11px;color:#8a8468;vertical-align:super}
+.doc .mark-right{background:#e3f4e9!important;border-color:#1f7a4d!important}
+.doc .mark-wrong{background:#fbe3df!important;border-color:#b8352a!important}
+.bank{display:flex;flex-wrap:wrap;gap:6px}
+.bank span{font-family:var(--mono);font-size:13px;padding:3px 9px;border:1.5px dashed var(--ink-2);border-radius:4px}
+.email{transform:rotate(.3deg)}
+
+/* Festival poster */
+.poster{background:#0f5b57;color:#fff8e6;border-radius:6px;padding:22px;display:grid;gap:12px;max-width:440px;transform:rotate(.8deg);box-shadow:0 12px 24px -14px rgba(0,0,0,.5)}
+.poster .p-org{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.poster .p-title{font-family:var(--display);font-weight:900;font-size:46px;line-height:.92;text-transform:uppercase;color:#ffd24a}
+.poster .p-date{font-weight:700;font-size:18px}
+.poster ul{margin:0;padding-left:18px;font-size:15px}
+.poster .p-small{background:#fff8e6;color:#0f3b38;border-radius:4px;padding:10px 12px;font-size:13.5px;line-height:1.45}
+.poster .p-small b{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:2px}
+
+/* Tape recorder */
+.tape{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--rule);border-radius:10px}
+.reels{display:flex;gap:6px}
+.reels span{width:30px;height:30px;border-radius:50%;border:5px solid var(--ink);border-style:dotted solid}
+.playing .reels span{animation:spin 1.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.playing .reels span{animation:none}}
+.plays{font-family:var(--mono);font-size:12.5px;color:var(--ink-2)}
+.transcript{font-style:italic;color:var(--ink-2);border-left:3px solid var(--rule);padding-left:12px}
+
+/* CCTV */
+.cctv{width:100%;max-width:100%;border-radius:6px;display:block}
+.prompts{display:grid;gap:10px;margin:0;padding:0;list-style:none;counter-reset:p}
+.prompts li{counter-increment:p;display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start}
+.prompts li::before{content:counter(p);font-family:var(--mono);font-size:12px;background:var(--tag);color:var(--tag-ink);border-radius:50%;width:24px;height:24px;display:grid;place-items:center;margin-top:2px}
+.timer{font-family:var(--mono);font-size:28px;font-variant-numeric:tabular-nums}
+.checks{display:grid;gap:8px}
+.checks label{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.checks input{width:20px;height:20px;margin-top:3px;accent-color:var(--good);flex:none}
+.parent{border:1.5px dashed var(--ink-2);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.parent .eyebrow{color:var(--ink)}
+
+/* Suspects */
+.suspects{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.suspect{font:inherit;text-align:left;color:var(--ink);background:transparent;border:1.5px solid var(--rule);border-radius:10px;padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:4px;min-width:0}
+.suspect .nm{font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;line-height:1}
+.suspect .rl{font-size:14.5px;color:var(--ink-2)}
+.suspect[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+
+textarea{width:100%;min-height:220px;line-height:1.6;resize:vertical}
+.meter{font-family:var(--mono);font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+/* Case closed */
+.stamp{display:inline-block;font-family:var(--display);font-weight:900;font-size:clamp(40px,10vw,72px);color:var(--bad);border:6px solid var(--bad);padding:4px 18px;transform:rotate(-6deg);text-transform:uppercase;line-height:1;align-self:flex-start;margin:8px 0}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+td.n{text-align:right;white-space:nowrap}
+.bar{height:8px;border-radius:4px;background:var(--rule);overflow:hidden;min-width:60px}
+.bar i{display:block;height:100%;background:var(--good)}
+.bar i.low{background:var(--bad)}
+.notebook li{margin-bottom:8px}
+.notebook ul{padding-left:20px;margin:0}
+.notebook .rule{display:block;color:var(--ink-2);font-size:15px}
+.small{font-size:14px;color:var(--ink-2)}
+.live{font-style:italic;color:var(--ink-2);min-height:1.5em;max-width:65ch}
+.result{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border:1.5px solid var(--rule);border-radius:8px}
+.result>b{font-family:var(--mono);font-size:15px}
+.score{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.score li{display:flex;flex-direction:column;font-size:15.5px}
+.score li.y b{color:var(--good)}
+.score li.n b{color:var(--bad)}
+.score li span{color:var(--ink-2);padding-left:22px}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="agency">Merlion Street Irregulars · Case 001</span>
+    <span class="rep" id="rep" hidden>Reputation <b id="repval">100</b></span>
+  </header>
+  <nav class="acts" id="acts" aria-label="Case progress">
+    <span>1 · The Call</span><span>2 · Investigation</span><span>3 · Interrogation</span><span>4 · The Report</span>
+  </nav>
+  <main class="file" id="screen" aria-live="polite"></main>
+</div>
+
+<script>
+(function(){
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+const HKEY = 'msi-satay-history';
+
+/* ---------- Case content ---------- */
+const CALL_TEXT = "Inspector, this is Lim Ah Seng from Sungei Lama Food Centre. Something terrible has happened. My grandmother's satay recipe book is gone! I put it in the drawer under my grill at five o'clock this evening, just before I went to the market office to collect my festival permit. When I came back at half past six, the drawer was open and the book had vanished. Tomorrow is the Satay Festival, and I have won it three years running. Without that book, I don't know what I will do. Please come quickly.";
+
+const LISTEN_QS = [
+  {id:'l1', stem:'What has gone missing?', opts:['Uncle Lim\'s festival permit','A satay recipe book','The grill from his stall','His prize money'], a:1,
+   hint:'Listen to the start again: what belonged to his grandmother?', rule:'Listen for the main idea first, then the details.'},
+  {id:'l2', stem:'When did the book disappear?', opts:['Before 5 pm','Between 5 pm and 6.30 pm','After 6.30 pm','On the morning of the festival'], a:1,
+   hint:'He gives two times: when he left the book and when he came back.', rule:'Time words like "at five o\'clock" and "half past six" mark the start and end of an event.'},
+  {id:'l3', stem:'How does Uncle Lim most likely feel?', opts:['Calm and relaxed','Angry with the festival organisers','Worried and desperate','Excited about winning again'], a:2,
+   hint:'Think about "something terrible" and "I don\'t know what I will do".', rule:'Feelings are often implied: use the speaker\'s words and tone as evidence.'}
+];
+
+const VISUAL_QS = [
+  {id:'v1', stem:'When was the volunteer briefing held?', opts:['Friday at 5.00 pm','Friday at 5.30 pm','Friday at 7.00 pm','Saturday at 11.00 am'], a:1,
+   hint:'Look at the "For volunteers" box in the corner.', rule:'Read the small print on a visual text: boxes and footnotes hold key details.'},
+  {id:'v2', stem:'Which statement is true, according to the poster?', opts:['Visitors must pay to enter.','The festival lasts two days.','Volunteers wear red festival caps.','The lucky draw is on Friday.'], a:2,
+   hint:'Check each option against the poster. Only one matches exactly.', rule:'For "which is true" questions, test every option against the text.'},
+  {id:'v3', stem:'What is the main purpose of the poster?', opts:['To sell satay to residents','To tell residents about the festival and its events','To find out who took the recipe','To advertise Uncle Lim\'s stall only'], a:1,
+   hint:'Who made it, and who is it speaking to?', rule:'Purpose questions: ask who made the text and what they want the reader to do.'}
+];
+
+const CLOZE = {
+  bank:['had','because','at','so','which','were','by','although','unless','was','who','on'],
+  parts:[
+    'Friday, 14 November. I ',' to close my stall early today ',' I needed fresh chicken for the festival. I left ',' 4 pm and drove to the wholesale market in Pasir Panjang. The traffic was terrible, ',' I only reached the market at 5 pm. I spent two hours choosing the meat, ',' was the best I have seen this year. The stallholders there ',' very friendly. ',' the time I returned, it was 7.15 pm. I am determined to beat Ah Lim tomorrow, ',' his recipe is legendary.'
+  ],
+  ans:['had','because','at','so','which','were','by','although'],
+  rules:[
+    '"had to" = something you were required to do in the past.',
+    '"because" introduces a reason.',
+    'Use "at" with clock times: at 4 pm.',
+    '"so" introduces a result.',
+    '"which" adds information about a thing (the meat).',
+    'A plural subject ("the stallholders") takes "were".',
+    '"By the time" means "not later than the moment that".',
+    '"although" shows a contrast between two ideas.'
+  ]
+};
+
+const EDIT = {
+  parts:['Hi Uncle Lim,<br>Thank you for letting me interview you on Friday afternoon. I really ',' hearing how you started your stall in 1985. I ',' the food centre at exactly 5 pm because I ',' a dinner appointment in Tampines. My photos of your kitchen ',' attached. I hope the festival ',' well tomorrow. I am sure it will be a great ','!<br>Warm regards,<br>Jessie Koh, <i>Makan Trails</i> blog'],
+  wrong:['enjoy','leaved','have','is','go','sucess'],
+  ans:[['enjoyed'],['left'],['had'],['are'],['goes'],['success']],
+  rules:[
+    'The interview happened in the past, so use the past tense: "enjoyed".',
+    '"leave" is irregular: leave → left.',
+    'Keep tenses consistent in a past account: "had" a dinner appointment.',
+    '"photos" is plural, so it takes "are".',
+    '"the festival" is singular: "I hope the festival goes well".',
+    'Spelling: "success" has double c and double s.'
+  ]
+};
+
+function variants(){
+  const out=[]; for(const t of ['that ','']) for(const d of ['the next day','the following day']) out.push('marcus said '+t+'he was helping his uncle at the festival '+d);
+  return out;
+}
+const SYNTH = [
+  {id:'s1', direct:'Marcus said, "I am helping my uncle at the festival tomorrow."', task:'Rewrite in reported speech.', start:'Marcus said that',
+   ok:variants(), model:'Marcus said that he was helping his uncle at the festival the next day.',
+   rule:'Reported speech: am → was, my → his, tomorrow → the next day.'},
+  {id:'s2', direct:'"Someone took the recipe book from the drawer."', task:'Rewrite in the passive voice.', start:'The recipe book',
+   ok:['the recipe book was taken from the drawer by someone','the recipe book was taken by someone from the drawer','the recipe book was taken from the drawer'],
+   model:'The recipe book was taken from the drawer by someone.',
+   rule:'Passive voice: the object comes first, then was/were + past participle (taken), then "by …".'},
+  {id:'s3', direct:'Marcus needed a famous recipe. He wanted to open his own satay stall.', task:'Combine into one sentence using "because".', start:'Marcus needed',
+   ok:['marcus needed a famous recipe because he wanted to open his own satay stall','marcus needed a famous recipe because he wanted to open his own stall'],
+   model:'Marcus needed a famous recipe because he wanted to open his own satay stall.',
+   rule:'"because" goes before the reason: the stall plan is why he needed the recipe.'}
+];
+
+const EVIDENCE = [
+  {id:'e1', t:'Marcus said he arrived at 7 pm for the volunteer briefing, but the poster says it was at 5.30 pm.', key:true},
+  {id:'e2', t:'The CCTV shows someone in a red volunteer cap at the stall at 6.02 pm, holding a brown book.', key:true},
+  {id:'e3', t:'Mdm Rosnah\'s diary shows she was at the Pasir Panjang market from 5 pm until about 7 pm.', key:false},
+  {id:'e4', t:'Jessie\'s email shows she left the food centre at 5 pm.', key:false},
+  {id:'e5', t:'Jessie took photos of Uncle Lim\'s kitchen.', key:false}
+];
+
+const REPORT_POINTS = [
+  'Who took the recipe book',
+  'Two pieces of evidence that prove it',
+  'Where the book is now',
+  'One suggestion for what Uncle Lim could do next',
+  'A polite greeting, closing and suitable tone'
+];
+
+/* ---------- State ---------- */
+const fresh = () => ({step:0, name:'', rep:100, start:Date.now(), plays:0,
+  answers:{}, first:{}, wrongOnce:{}, checks:{}, mistakes:[],
+  suspect:null, evidence:[], oral:{read:null, convo:[null,null,null], err:null}, writing:'', writeMark:null, writeFirst:null, saved:false});
+let S = fresh();
+
+function addMistake(key, area, rule){
+  if(S.wrongOnce[key]) return;
+  S.wrongOnce[key]=true; S.rep=Math.max(0,S.rep-5);
+  S.mistakes.push({area, rule});
+}
+
+/* ---------- Rendering helpers ---------- */
+function setActs(){
+  const act = S.step<=1?0 : S.step<=4?1 : S.step<=6?2 : 3;
+  [...document.querySelectorAll('#acts span')].forEach((el,i)=>{
+    el.classList.toggle('on', i===act && S.step<9);
+    el.classList.toggle('done', i<act || S.step===9);
+  });
+  $('#rep').hidden = S.step===0;
+  $('#repval').textContent = S.rep;
+}
+function go(n){ S.step=n; render(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+function mcqBlock(qs, area){
+  return qs.map(q=>{
+    const got = S.answers[q.id];
+    return `<div class="q" data-q="${q.id}"><div class="stem">${esc(q.stem)}</div><div class="opts">${
+      q.opts.map((o,i)=>{
+        let cls='opt'; const tried=(S.answers[q.id+'_tried']||[]);
+        if(got===q.a && i===q.a) cls+=' right'; else if(tried.includes(i)) cls+=' wrong';
+        return `<button class="${cls}" data-q="${q.id}" data-i="${i}" ${got===q.a?'disabled':''}>${esc(o)}</button>`;
+      }).join('')}</div>${
+      S.answers[q.id+'_hint'] && got!==q.a ? `<div class="hint">${esc(q.hint)}</div>`:''}${
+      got===q.a ? `<div class="hint ok">Correct.</div>`:''}</div>`;
+  }).join('');
+}
+function wireMcq(qs, area, after){
+  document.querySelectorAll('.opt').forEach(b=>b.addEventListener('click',()=>{
+    const q = qs.find(x=>x.id===b.dataset.q), i=+b.dataset.i;
+    if(i===q.a){ S.answers[q.id]=i; if(!(q.id in S.first)) S.first[q.id]=true; }
+    else { S.answers[q.id+'_tried']=[...(S.answers[q.id+'_tried']||[]), i]; S.answers[q.id+'_hint']=true;
+      if(!(q.id in S.first)) S.first[q.id]=false; addMistake(q.id, area, q.rule); }
+    render(); after && after();
+  }));
+}
+const allDone = qs => qs.every(q=>S.answers[q.id]===q.a);
+
+/* ---------- Screens ---------- */
+const screens = [];
+
+screens[0] = () => `
+  <div class="eyebrow">Case file 001 · Sungei Lama Food Centre</div>
+  <h1>The Vanishing Satay Recipe</h1>
+  <p>A legendary satay recipe has disappeared the night before the Sungei Lama Satay Festival. Inspector Wren needs a sharp new recruit to read the clues, question the suspects and file the report.</p>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Every clue in this case is hidden in words. Read carefully, listen closely and check your answers. A careless detective loses reputation. A careful one solves the case.”</p></div>
+  <label for="nm"><h3>Your detective name</h3></label>
+  <div class="row"><input type="text" id="nm" maxlength="24" placeholder="e.g. Detective Jiuyu" value="${esc(S.name)}"><button class="btn tag" id="startbtn">Open the case file</button></div>
+  <p class="small">About 30 minutes. You will practise listening, visual text, grammar cloze, editing, synthesis, reading aloud, oral conversation and situational writing. The game marks everything itself, including your speaking.</p>
+  <p class="small"><b>Before you start:</b> play in Chrome on a computer, or Safari on an iPad, with an internet connection. When asked to use the microphone, choose Allow.</p>`;
+screens[0].wire = () => {
+  const start=()=>{ S.name=($('#nm').value.trim()||'Detective'); S.start=Date.now(); go(1); };
+  $('#startbtn').addEventListener('click',start);
+  $('#nm').addEventListener('keydown',e=>{ if(e.key==='Enter') start(); });
+};
+
+screens[1] = () => `
+  <div class="eyebrow">Act 1 · The Call · Friday 14 November, 6.40 pm</div>
+  <h2>A message for the Inspector</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“${esc(S.name)}, a voice message has just come in. You may play it <b>twice</b>, just like in the listening exam. Then answer the questions.”</p></div>
+  <span class="task"><i>Paper 3</i> Listening comprehension</span>
+  <div class="tape" id="tape"><div class="reels"><span></span><span></span></div>
+    <button class="btn" id="playbtn" ${S.plays>=2?'disabled':''}>${S.plays===0?'Play the message':S.plays===1?'Play it again':'No plays left'}</button>
+    <span class="plays">Plays used: ${S.plays} of 2</span></div>
+  ${'speechSynthesis' in window ? '' : `<p class="hint">This browser cannot play the message aloud, so read it instead: <span class="transcript">${esc(CALL_TEXT)}</span></p>`}
+  ${mcqBlock(LISTEN_QS)}
+  ${allDone(LISTEN_QS)?`<details><summary>Show what Uncle Lim said</summary><p class="transcript">${esc(CALL_TEXT)}</p></details>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Good. Three people were near the stall today: Uncle Lim's nephew <b>Marcus</b>, who says he arrived at <b>7 pm for the volunteer briefing</b>; rival stallholder <b>Mdm Rosnah</b>; and food blogger <b>Jessie Koh</b>. To the food centre!”</p></div>
+  <div class="row end"><button class="btn tag" id="next">Go to the stall →</button></div>`:''}`;
+screens[1].wire = () => {
+  $('#playbtn').addEventListener('click',()=>{
+    if(!('speechSynthesis' in window) || S.plays>=2) return;
+    S.plays++; const u=new SpeechSynthesisUtterance(CALL_TEXT);
+    const vs=speechSynthesis.getVoices(); const v=vs.find(v=>/en-SG/i.test(v.lang))||vs.find(v=>/en-GB/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang));
+    if(v) u.voice=v; u.rate=.92;
+    u.onend=()=>{ const t=$('#tape'); t&&t.classList.remove('playing'); };
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+    render(); $('#tape').classList.add('playing');
+  });
+  wireMcq(LISTEN_QS,'Listening');
+  $('#next')&&$('#next').addEventListener('click',()=>{ try{speechSynthesis.cancel()}catch(e){} go(2); });
+};
+
+screens[2] = () => `
+  <div class="eyebrow">Act 2 · Investigation · Clue 1 of 3</div>
+  <h2>The poster on the stall</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“This poster is taped beside Uncle Lim's grill. Posters can catch people out. Study it closely.”</p></div>
+  <span class="task"><i>Paper 2</i> Visual text comprehension</span>
+  <div class="poster" role="img" aria-label="Festival poster">
+    <span class="p-org">Sungei Lama Residents' Committee presents</span>
+    <span class="p-title">Sungei Lama Satay Festival</span>
+    <span class="p-date">Saturday 15 November · 11 am to 9 pm</span>
+    <ul><li>Satay cook-off judged at 6 pm</li><li>Live music and kids' corner</li><li>Lucky draw at 8.30 pm</li><li>Free entry for everyone</li></ul>
+    <div class="p-small"><b>For volunteers · Friday 14 November</b>Stall set-up from 5.00 pm. Volunteer briefing at 5.30 pm at the RC office. Please wear your red festival cap so stallholders can find you.</div>
+  </div>
+  ${mcqBlock(VISUAL_QS)}
+  ${allDone(VISUAL_QS)?`<div class="wren"><span class="who">Inspector Wren</span><p>“Interesting. Marcus told us he came at 7 pm <i>for the briefing</i>. But the briefing was at 5.30 pm. Write that in your notebook.”</p></div>
+  <div class="row end"><button class="btn tag" id="next">Check Mdm Rosnah's alibi →</button></div>`:''}`;
+screens[2].wire = () => { wireMcq(VISUAL_QS,'Visual text'); $('#next')&&$('#next').addEventListener('click',()=>go(3)); };
+
+function checkedBlockControls(key, allRight){
+  const n=S.checks[key]||0;
+  if(allRight) return `<div class="hint ok">All correct. The page is restored.</div>`;
+  if(n>=2) return `<div class="hint">The correct answers are now shown in green. Read the rules in your notebook at the end.</div>`;
+  return '';
+}
+
+screens[3] = () => {
+  const key='cloze', n=S.checks[key]||0, vals=S.answers.cloze||[];
+  const right=i=>vals[i]===CLOZE.ans[i];
+  const all=n>0 && CLOZE.ans.every((a,i)=>right(i));
+  const reveal = n>=2 && !all;
+  let html=''; CLOZE.parts.forEach((p,i)=>{ html+=esc(p);
+    if(i<CLOZE.ans.length){ const v=reveal&&!right(i)?CLOZE.ans[i]:(vals[i]||'');
+      const cls = n? (right(i)||reveal?'mark-right':'mark-wrong') : '';
+      html+=`<span class="num">${i+1}</span><select id="c${i}" class="${cls}" aria-label="Blank ${i+1}" ${all||reveal?'disabled':''}><option value=""></option>${CLOZE.bank.map(w=>`<option ${w===v?'selected':''}>${w}</option>`).join('')}</select>`; }});
+  return `
+  <div class="eyebrow">Act 2 · Investigation · Clue 2 of 3</div>
+  <h2>Mdm Rosnah's smudged diary</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Mdm Rosnah runs Rosnah's Grill, two stalls away. She lent us her diary, but rain has smudged some words. Fill each blank with one word from the box. Each word is used once at most.”</p></div>
+  <span class="task"><i>Paper 2</i> Grammar cloze</span>
+  <div class="bank" aria-label="Word bank">${CLOZE.bank.map(w=>`<span>${w}</span>`).join('')}</div>
+  <div class="doc"><div class="head">DIARY · R. BINTE OMAR</div>${html}</div>
+  ${checkedBlockControls(key, all)}
+  <div class="row end">${all||reveal?`<button class="btn tag" id="next">Read Jessie's email →</button>`:`<button class="btn" id="check">Check my answers${n?' again':''}</button>`}</div>
+  ${all||reveal?`<div class="wren"><span class="who">Inspector Wren</span><p>“So Mdm Rosnah was at Pasir Panjang from 5 pm until after 7 pm. She could not have been at the stall when the book vanished.”</p></div>`:''}`;
+};
+screens[3].wire = () => {
+  $('#check')&&$('#check').addEventListener('click',()=>{
+    const vals=CLOZE.ans.map((_,i)=>$('#c'+i).value); S.answers.cloze=vals;
+    const first=!S.checks.cloze; S.checks.cloze=(S.checks.cloze||0)+1;
+    vals.forEach((v,i)=>{ const k='cloze'+i; if(first) S.first[k]= v===CLOZE.ans[i]; if(v!==CLOZE.ans[i]) addMistake(k,'Grammar cloze',`Blank ${i+1} (${CLOZE.ans[i]}): ${CLOZE.rules[i]}`); });
+    render();
+  });
+  $('#next')&&$('#next').addEventListener('click',()=>go(4));
+};
+
+screens[4] = () => {
+  const key='edit', n=S.checks[key]||0, vals=S.answers.edit||[];
+  const right=i=>EDIT.ans[i].includes(norm(vals[i]||''));
+  const all=n>0 && EDIT.ans.every((_,i)=>right(i)); const reveal=n>=2&&!all;
+  let html=''; EDIT.parts.forEach((p,i)=>{ html+=p;
+    if(i<EDIT.wrong.length){ const v=reveal&&!right(i)?EDIT.ans[i][0]:(vals[i]||'');
+      const cls=n?(right(i)||reveal?'mark-right':'mark-wrong'):'';
+      html+=`<span class="ed"><span><span class="num">${i+1}</span><u>${EDIT.wrong[i]}</u></span><input type="text" id="e${i}" class="${cls}" value="${esc(v)}" aria-label="Correction for ${EDIT.wrong[i]}" autocomplete="off" autocapitalize="off" spellcheck="false" ${all||reveal?'disabled':''}></span>`; }});
+  return `
+  <div class="eyebrow">Act 2 · Investigation · Clue 3 of 3</div>
+  <h2>Jessie's hurried email</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“The blogger emailed Uncle Lim after her interview, but she typed it in a hurry. Each underlined word has a spelling or grammar mistake. Type the correct word in the box below it.”</p></div>
+  <span class="task"><i>Paper 2</i> Editing for spelling and grammar</span>
+  <div class="doc email"><div class="head">FROM: jessie@makantrails.example · FRI 14 NOV, 9.12 PM<br>SUBJECT: Thank you!</div>${html}</div>
+  ${checkedBlockControls(key, all)}
+  <div class="row end">${all||reveal?`<button class="btn tag" id="next">Question the suspects →</button>`:`<button class="btn" id="check">Check my corrections${n?' again':''}</button>`}</div>
+  ${all||reveal?`<div class="wren"><span class="who">Inspector Wren</span><p>“Jessie left at 5 pm, before Uncle Lim even walked to the office. That leaves one person who was at the food centre and has not told us the truth.”</p></div>`:''}`;
+};
+screens[4].wire = () => {
+  $('#check')&&$('#check').addEventListener('click',()=>{
+    const vals=EDIT.wrong.map((_,i)=>$('#e'+i).value); S.answers.edit=vals;
+    const first=!S.checks.edit; S.checks.edit=(S.checks.edit||0)+1;
+    vals.forEach((v,i)=>{ const ok=EDIT.ans[i].includes(norm(v)); const k='edit'+i; if(first) S.first[k]=ok; if(!ok) addMistake(k,'Editing',`${EDIT.wrong[i]} → ${EDIT.ans[i][0]}: ${EDIT.rules[i]}`); });
+    render();
+  });
+  $('#next')&&$('#next').addEventListener('click',()=>go(5));
+};
+
+screens[5] = () => {
+  const key='synth', n=S.checks[key]||0, vals=S.answers.synth||SYNTH.map(s=>s.start+' ');
+  const right=i=>SYNTH[i].ok.includes(norm(vals[i]||''));
+  const all=n>0&&SYNTH.every((_,i)=>right(i)); const reveal=n>=2&&!all;
+  return `
+  <div class="eyebrow">Act 3 · Interrogation · The police file</div>
+  <h2>Marcus's statements</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Before we question Marcus, the police want his statements written up properly. Rewrite each one exactly as asked. Keep the meaning the same.”</p></div>
+  <span class="task"><i>Paper 2</i> Synthesis and transformation</span>
+  ${SYNTH.map((s,i)=>`<div class="q"><div class="stem">${i+1}. ${esc(s.direct)}</div><p class="small">${esc(s.task)}</p>
+    <input type="text" id="s${i}" class="${n?(right(i)||reveal?'mark-right':'mark-wrong'):''}" value="${esc(reveal&&!right(i)?s.model:vals[i])}" style="width:100%" autocomplete="off" spellcheck="false" ${all||reveal?'disabled':''} aria-label="Rewrite sentence ${i+1}">
+    ${n&&!right(i)&&!reveal?`<div class="hint">${esc(s.rule)}</div>`:''}</div>`).join('')}
+  ${checkedBlockControls(key, all)}
+  <div class="row end">${all||reveal?`<button class="btn tag" id="next">View the CCTV →</button>`:`<button class="btn" id="check">Check my sentences${n?' again':''}</button>`}</div>`;
+};
+screens[5].wire = () => {
+  $('#check')&&$('#check').addEventListener('click',()=>{
+    const vals=SYNTH.map((_,i)=>$('#s'+i).value); S.answers.synth=vals;
+    const first=!S.checks.synth; S.checks.synth=(S.checks.synth||0)+1;
+    vals.forEach((v,i)=>{ const ok=SYNTH[i].ok.includes(norm(v)); const k='synth'+i; if(first) S.first[k]=ok; if(!ok) addMistake(k,'Synthesis',`${SYNTH[i].model} — ${SYNTH[i].rule}`); });
+    render();
+  });
+  $('#next')&&$('#next').addEventListener('click',()=>go(6));
+};
+
+const CCTV = `<svg class="cctv" viewBox="0 0 640 380" role="img" aria-label="CCTV still of the hawker centre at 6.02 pm: a person in a red cap beside stall 14 holding a brown book">
+  <rect width="640" height="380" fill="#20282c"/>
+  <rect x="0" y="250" width="640" height="130" fill="#2d3639"/>
+  <g fill="#3a464a"><rect x="30" y="80" width="170" height="170"/><rect x="235" y="80" width="170" height="170"/><rect x="440" y="80" width="170" height="170"/></g>
+  <g fill="#e7d9a8"><rect x="30" y="80" width="170" height="34"/><rect x="235" y="80" width="170" height="34"/><rect x="440" y="80" width="170" height="34"/></g>
+  <g font-family="IBM Plex Mono, monospace" font-size="15" font-weight="600" fill="#2b2b22" text-anchor="middle">
+    <text x="115" y="103">13 · CHICKEN RICE</text><text x="320" y="103">14 · LIM'S SATAY</text><text x="525" y="103">15 · ROSNAH'S GRILL</text></g>
+  <rect x="260" y="180" width="120" height="26" fill="#5b6467"/><g stroke="#c96a32" stroke-width="3"><line x1="270" y1="176" x2="370" y2="176"/><line x1="270" y1="170" x2="370" y2="170"/></g>
+  <rect x="262" y="212" width="116" height="30" fill="#4a5356" stroke="#7b8588"/><rect x="262" y="236" width="116" height="16" fill="#6b7477" transform="translate(0,6)"/>
+  <rect x="500" y="150" width="70" height="60" fill="#262e31"/><text x="535" y="185" font-family="IBM Plex Mono, monospace" font-size="12" fill="#8c979a" text-anchor="middle">CLOSED</text>
+  <g opacity=".45" fill="#9aa3a6"><circle cx="90" cy="282" r="12"/><rect x="76" y="295" width="28" height="50" rx="10"/><circle cx="160" cy="288" r="11"/><rect x="147" y="300" width="26" height="46" rx="10"/><circle cx="575" cy="285" r="12"/><rect x="561" y="298" width="28" height="48" rx="10"/></g>
+  <g><circle cx="410" cy="246" r="15" fill="#c9a98a"/><path d="M393 242 q17 -20 34 0 l8 2 l-42 0z" fill="#d9302a"/><rect x="394" y="262" width="34" height="70" rx="12" fill="#4b6a8a"/>
+    <rect x="370" y="278" width="26" height="20" fill="#8a5a2b" stroke="#5c3a19"/><rect x="384" y="270" width="12" height="10" rx="5" fill="#c9a98a"/></g>
+  <rect x="0" y="0" width="640" height="380" fill="none" stroke="#000" stroke-width="10"/>
+  <g font-family="IBM Plex Mono, monospace" font-size="15" fill="#f4f4f0"><text x="20" y="34">● REC  CAM 03</text><text x="620" y="34" text-anchor="end">FRI 14 NOV  18:02:41</text></g>
+</svg>`;
+
+/* ---------- Speech: Chrome turns speech into text ---------- */
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const LANGS = ['en-SG','en-GB','en-US']; let langIdx = 0;
+let stopCurrent = null;
+function startListening(maxSec, onUpdate, onDone){
+  let finals='', interim='', ended=false, rec=null, quick=0, startedAt=0; const t0=Date.now();
+  const secs=()=>Math.round((Date.now()-t0)/1000);
+  const finish=(err)=>{ if(ended) return; ended=true; clearInterval(tick); stopCurrent=null;
+    try{ rec&&rec.stop(); }catch(_){}
+    onDone(err?null:(finals+interim).trim(), secs(), err||null); };
+  const make=()=>{ const r=new SR(); r.lang=LANGS[langIdx]; r.continuous=true; r.interimResults=true; startedAt=Date.now();
+    r.onresult=e=>{ interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ const tx=e.results[i][0].transcript; if(e.results[i].isFinal) finals+=tx+' '; else interim+=tx; } onUpdate(finals+interim, secs()); };
+    r.onerror=e=>{ if(e.error==='language-not-supported' && langIdx<LANGS.length-1){ langIdx++; return; }
+      if(['not-allowed','service-not-allowed','audio-capture'].includes(e.error)) finish('mic'); else if(e.error==='network') finish('network'); };
+    r.onend=()=>{ if(ended) return;
+      if(Date.now()-startedAt<400){ if(++quick>5) return finish(finals.trim()?null:'mic'); } else quick=0;
+      setTimeout(()=>{ if(ended) return; try{ rec=make(); rec.start(); }catch(_){ finish(); } },150); };
+    return r; };
+  try{ rec=make(); rec.start(); }catch(_){ onDone(null,0,'mic'); return null; }
+  const tick=setInterval(()=>{ onUpdate(finals+interim, secs()); if(secs()>=maxSec) finish(); },400);
+  stopCurrent=()=>finish();
+  return stopCurrent;
+}
+const words = s => norm(s).split(' ').filter(Boolean);
+function lcs(a,b){ // returns which words of a were matched in order
+  const n=a.length,m=b.length,dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) dp[i][j]= a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const hit=new Array(n).fill(false); let i=0,j=0;
+  while(i<n&&j<m){ if(a[i]===b[j]){hit[i]=true;i++;j++;} else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
+  return hit;
+}
+const fmt = t => `${Math.floor(t/60)}:${String(t%60).padStart(2,'0')}`;
+
+const PASSAGE = "Message to headquarters. The recipe book vanished late on Friday evening, while Uncle Lim was away from his stall. He is deeply upset, because the festival begins tomorrow morning. Three people were seen near the food centre. I shall question each of them carefully before I reach a conclusion. Please send a constable to guard the stall tonight. Wren.";
+
+function markReading(text, secs){
+  const target=words(PASSAGE), said=words(text), hit=lcs(target,said);
+  const acc=hit.filter(Boolean).length/target.length;
+  const wpm= secs>0 ? Math.round(said.length/(secs/60)) : 0;
+  let score= acc>=.9?3: acc>=.75?2: acc>=.5?1:0;
+  const paceOk = wpm>=100 && wpm<=170 && secs>=8;
+  if(paceOk) score++;
+  const missed=[...new Set(target.filter((w,i)=>!hit[i]))].slice(0,10);
+  return {score, acc:Math.round(acc*100), wpm, paceOk, missed};
+}
+
+const CONVO = [
+  {q:'What do you notice in this picture? Who do you think the person in the red cap might be, and why?',
+   keys:['red','cap','book','marcus','volunteer','stall','camera','cctv','nephew','brown','holding','satay','grill','drawer','evening']},
+  {q:'Have you ever been to a busy event such as a festival or a fair? What was it like?',
+   keys:['festival','fair','crowd','crowded','people','busy','noisy','food','music','event','carnival','queue','games','fun','hot','lights']},
+  {q:'Do you think it is ever right to copy someone else\'s recipe or idea? Why or why not?',
+   keys:['copy','copying','recipe','idea','right','wrong','fair','unfair','permission','ask','steal','stealing','credit','own','honest']}
+];
+const RE_REASON=/\b(because|since|so that|as a result|that is why|thats why|therefore|the reason)\b/;
+const RE_EXAMPLE=/\b(for example|for instance|such as|once|last (year|week|month|time|holiday)|i remember|when i|i have been|ive been|i went|my family|my friends?)\b/;
+function markConvo(i, text){
+  const s=norm(text), n=words(text).length, keyHits=CONVO[i].keys.filter(k=>new RegExp('\\b'+k+'\\b').test(s)).length;
+  const pts=[
+    {ok:n>=45, label:'Spoke at length', tip:`You said about ${n} words. Aim for 50 or more: give a point, a reason and an example.`},
+    {ok:RE_REASON.test(s), label:'Gave a reason', tip:'Explain your thinking with "because …" or "that is why …".'},
+    {ok:RE_EXAMPLE.test(s), label:'Gave an example or own experience', tip:'Add "For example, …" or "I remember when I …".'},
+    {ok:keyHits>=2, label:'Stayed on the question', tip:'Use words from the question and the picture so the examiner knows you are answering it.'}
+  ];
+  return {score:pts.filter(p=>p.ok).length, pts, n};
+}
+
+function scoreList(pts){
+  return `<ul class="score">${pts.map(p=>`<li class="${p.ok?'y':'n'}"><b>${p.ok?'✓':'✗'} ${esc(p.label)}</b>${p.ok?'':`<span>${esc(p.tip)}</span>`}</li>`).join('')}</ul>`;
+}
+
+screens[6] = () => {
+  const O=S.oral, R=O.read, speech=!!SR && !O.typed;
+  const readDone = !speech || !!R;
+  const convoDone = O.convo.every(Boolean);
+  const readCard = !SR ? '' : `
+  <section class="q" id="readcard">
+    <span class="task"><i>Paper 4</i> Reading aloud</span>
+    <p>Inspector Wren needs you to read his message to headquarters over the radio. Read it clearly, with expression. Pause at full stops.</p>
+    <div class="doc"><div class="head">RADIO MESSAGE · READ ALOUD</div>${esc(PASSAGE)}</div>
+    ${speech?`<div class="row"><button class="btn" id="readbtn">${R?'Read it again':'Start reading'}</button><span class="meter" id="readtime"></span></div>
+    <p class="live" id="readlive"></p>`:''}
+    ${R?`<div class="result"><b>${R.score} / 4</b> · ${R.acc}% of words read clearly · ${R.wpm} words a minute
+      ${scoreList([
+        {ok:R.acc>=90, label:'Read the words accurately', tip:R.missed.length?`Words to practise: ${R.missed.join(', ')}.`:'Read every word carefully.'},
+        {ok:R.paceOk, label:'Steady pace', tip:R.wpm>170?'A little fast. Slow down and pause at each full stop.':'A little slow. Keep going smoothly without stopping between words.'}])}</div>`:''}
+  </section>`;
+  const convoCards = CONVO.map((c,i)=>{ const r=O.convo[i];
+    return `<section class="q">
+      <div class="stem">${i+1}. ${esc(c.q)}</div>
+      ${speech?`<div class="row"><button class="btn${readDone?'':' ghost'}" data-talk="${i}" ${readDone?'':'disabled'}>${r?'Answer again':'Start speaking'}</button><span class="meter" id="time${i}"></span></div>
+      <p class="live" id="live${i}">${r?esc(r.text):''}</p>`
+      :`<textarea id="type${i}" style="min-height:110px" placeholder="Type what you would say out loud.">${esc(r?r.text:'')}</textarea>
+      <div class="row"><button class="btn" data-type="${i}">Mark my answer</button></div>`}
+      ${r?`<div class="result"><b>${r.score} / 4</b>${scoreList(r.pts)}</div>`:''}
+    </section>`; }).join('');
+  return `
+  <div class="eyebrow">Act 3 · Interrogation · Speaking</div>
+  <h2>On the radio and on camera</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Time to use your voice. Speak clearly into the microphone. The game listens and tells you how you did. You can try each one again.”</p></div>
+  ${O.err?`<div class="hint">${esc(O.err)} <button class="btn ghost" id="typemode" style="margin-top:8px">Type my answers instead</button></div>`:''}
+  ${!SR?`<div class="hint">Speaking needs Chrome, or Safari on an iPad with Dictation turned on. On this browser, type your answers instead.</div>`:''}
+  ${readCard}
+  <section class="q"><span class="task"><i>Paper 4</i> Stimulus-based conversation</span>
+  <p>The food centre camera caught this picture. Answer each question out loud in full sentences, for about a minute. Give reasons and examples.</p>
+  ${CCTV}</section>
+  ${convoCards}
+  <div class="row end"><button class="btn tag" id="next" ${readDone&&convoDone?'':'disabled'}>Make the accusation →</button></div>
+  ${readDone&&convoDone?'':'<p class="small" style="text-align:right">Finish the reading and all three questions to continue.</p>'}`;
+};
+screens[6].wire = () => {
+  const O=S.oral;
+  const micErr = code => { O.err = code==='network'
+      ? 'The game could not reach the speech service. Check the internet connection, then try again.'
+      : 'The microphone is blocked. On an iPad, tap "aA" in the address bar, then Website Settings, and allow the microphone. In Chrome, click the microphone icon in the address bar. Then try again.';
+    render(); };
+  const lock = on => document.querySelectorAll('[data-talk],#readbtn').forEach(b=>{ if(!b.dataset.active) b.disabled=on; });
+  const rb=$('#readbtn');
+  rb&&rb.addEventListener('click',()=>{
+    if(rb.dataset.active){ stopCurrent&&stopCurrent(); return; }
+    O.err=null; rb.dataset.active='1'; rb.textContent="I'm done"; lock(true);
+    startListening(75,(t,sec)=>{ const l=$('#readlive'); if(l) l.textContent=t; const m=$('#readtime'); if(m) m.textContent='● '+fmt(sec); },
+      (text,sec,err)=>{ if(err) return micErr(err);
+        const R=markReading(text||'',sec);
+        if(!O.read){ if(R.acc<90 && R.missed.length) addMistake('read','Reading aloud',`Practise reading: ${R.missed.join(', ')}.`); if(!R.paceOk) addMistake('readpace','Reading aloud','Read at a steady pace (about 120–150 words a minute) and pause at full stops.'); }
+        O.read = !O.read || R.score>=O.read.score ? R : O.read; render(); });
+  });
+  document.querySelectorAll('[data-talk]').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.talk;
+    if(b.dataset.active){ stopCurrent&&stopCurrent(); return; }
+    O.err=null; b.dataset.active='1'; b.textContent="I'm done"; lock(true);
+    startListening(90,(t,sec)=>{ const l=$('#live'+i); if(l) l.textContent=t; const m=$('#time'+i); if(m) m.textContent='● '+fmt(sec)+' / 1:30'; },
+      (text,sec,err)=>{ if(err) return micErr(err); saveConvo(i,text||''); });
+  }));
+  document.querySelectorAll('[data-type]').forEach(b=>b.addEventListener('click',()=>{ const i=+b.dataset.type; saveConvo(i,$('#type'+i).value); }));
+  function saveConvo(i,text){
+    const r=markConvo(i,text); r.text=text;
+    if(!O.convo[i]) r.pts.forEach((p,k)=>{ if(!p.ok) addMistake('convo'+i+'_'+k,'Oral conversation',p.tip); });
+    O.convo[i] = !O.convo[i] || r.score>=O.convo[i].score ? r : Object.assign({},O.convo[i]);
+    render();
+  }
+  $('#typemode')&&$('#typemode').addEventListener('click',()=>{ O.typed=true; O.err=null; render(); });
+  $('#next').addEventListener('click',()=>{ stopCurrent&&stopCurrent(); go(7); });
+};
+
+screens[7] = () => {
+  const tried=S.answers.accuseTried||0, solved=S.answers.accused;
+  const sus=[['marcus','Marcus Lim','Uncle Lim\'s nephew · festival volunteer'],['rosnah','Mdm Rosnah','Owner of Rosnah\'s Grill · rival'],['jessie','Jessie Koh','Food blogger · Makan Trails']];
+  return `
+  <div class="eyebrow">Act 4 · The Report · Accusation</div>
+  <h2>Who took the recipe?</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Choose the culprit, then tick <b>exactly two</b> pieces of evidence that prove it. A good detective does not guess.”</p></div>
+  <div class="suspects">${sus.map(s=>`<button class="suspect" data-s="${s[0]}" aria-pressed="${S.suspect===s[0]}" ${solved?'disabled':''}><span class="nm">${s[1]}</span><span class="rl">${s[2]}</span></button>`).join('')}</div>
+  <div class="checks">${EVIDENCE.map(e=>`<label><input type="checkbox" id="${e.id}" ${S.evidence.includes(e.id)?'checked':''} ${solved?'disabled':''}> ${esc(e.t)}</label>`).join('')}</div>
+  ${S.answers.accuseMsg?`<div class="hint ${solved?'ok':''}">${S.answers.accuseMsg}</div>`:''}
+  ${solved?`<div class="wren"><span class="who">Marcus Lim</span><p>“Okay, okay. It was me. I wanted to open my own satay stall one day, and Uncle never lets anyone read the book. I only meant to copy it tonight. It's safe in my bag at the RC office. I'm really sorry.”</p></div>
+  <div class="row end"><button class="btn tag" id="next">Write the case report →</button></div>`:`<div class="row end"><button class="btn" id="accuse">Accuse</button></div>`}`;
+};
+screens[7].wire = () => {
+  document.querySelectorAll('.suspect').forEach(b=>b.addEventListener('click',()=>{ S.suspect=b.dataset.s; syncEv(); render(); }));
+  const syncEv=()=>{ S.evidence=EVIDENCE.filter(e=>$('#'+e.id)&&$('#'+e.id).checked).map(e=>e.id); };
+  document.querySelectorAll('.checks input').forEach(c=>c.addEventListener('change',syncEv));
+  $('#accuse')&&$('#accuse').addEventListener('click',()=>{
+    syncEv(); const first=!('accuse' in S.first);
+    const evOk = S.evidence.length===2 && S.evidence.every(id=>EVIDENCE.find(e=>e.id===id).key);
+    if(!S.suspect){ S.answers.accuseMsg='Choose a suspect first.'; }
+    else if(S.suspect!=='marcus'){ S.answers.accuseMsg='That person has an alibi. Look again at who could have been at the stall between 5 pm and 6.30 pm.'; if(first) S.first.accuse=false; addMistake('accuse','Reasoning','Rule out suspects with alibis: check each person\'s time against the time of the crime.'); }
+    else if(!evOk){ S.answers.accuseMsg='Right suspect, but your evidence must point to Marcus. Pick the two clues about him.'; if(first) S.first.accuse=false; addMistake('accuseEv','Reasoning','Evidence must link the suspect to the crime, not just clear other people.'); }
+    else { S.answers.accused=true; if(first) S.first.accuse=true; S.answers.accuseMsg='Case solved. Marcus has something to say.'; }
+    render();
+  });
+  $('#next')&&$('#next').addEventListener('click',()=>go(8));
+};
+
+const wc = s => (s.trim().match(/\S+/g)||[]).length;
+function markEmail(t){
+  const s=norm(t), n=wc(t);
+  const ev=[/(briefing|5 30|half past five|7 pm|seven|lied|lie|lying)/,/(red cap|cap|cctv|camera|video|footage)/].filter(r=>r.test(s)).length;
+  return [
+    {ok:/\b(marcus|nephew)\b/.test(s) && /\b(took|taken|stole|stolen|borrowed|culprit|responsible|did it)\b/.test(s), label:'Said who took the book', tip:'Name Marcus and say clearly that he took the book.'},
+    {ok:ev>=2, label:'Gave two pieces of evidence', tip:ev===1?'You gave one clue. Add the other: the 5.30 pm briefing, or the red cap on the CCTV.':'Mention the 5.30 pm briefing time and the red cap seen on the CCTV.'},
+    {ok:/\b(bag|rc office|residents committee|office)\b/.test(s), label:'Said where the book is now', tip:'Tell Uncle Lim the book is safe in Marcus\'s bag at the RC office.'},
+    {ok:/\b(should|could|suggest|recommend|perhaps|maybe|why not|advise|might want|it would be)\b/.test(s), label:'Made a suggestion', tip:'Add one idea, such as "You could keep the book locked at home."'},
+    {ok:/^(dear|hi|hello|good (morning|afternoon|evening))\b/.test(s) && /\b(regards|yours|sincerely|best wishes|thank you|take care)\b/.test(s) && !/\b(lol|omg|u r|ur|btw)\b/.test(s), label:'Polite greeting, closing and tone', tip:'Start with "Dear Uncle Lim," and end with "Yours sincerely," or "Warm regards," and your name. Avoid chat slang.'},
+    {ok:n>=80&&n<=150, label:'Right length (80–150 words)', tip:n<80?`Only ${n} words. Add more detail to each point.`:`${n} words. Cut repeated ideas to stay under 150.`}
+  ];
+}
+screens[8] = () => {
+  const w=wc(S.writing), M=S.writeMark;
+  return `
+  <div class="eyebrow">Act 4 · The Report · Writing</div>
+  <h2>Email to Uncle Lim</h2>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Uncle Lim is waiting for news. Write him an email explaining what happened. Use your own words and cover every point on the list. He is an older man and a respected stallholder, so keep your tone polite.”</p></div>
+  <span class="task"><i>Paper 1</i> Situational writing</span>
+  <ul>${REPORT_POINTS.map(p=>`<li>${esc(p)}</li>`).join('')}</ul>
+  <label for="report" class="small">Aim for 80 to 150 words.</label>
+  <textarea id="report" placeholder="Dear Uncle Lim,">${esc(S.writing)}</textarea>
+  <div class="row"><span class="meter" id="meter">${w} words</span><button class="btn" id="markbtn">${M?'Mark it again':'Mark my email'}</button></div>
+  ${M?`<div class="result"><b>${M.filter(p=>p.ok).length} / 6</b>${S.writeFirst!=null?` <span class="small">(first marking: ${S.writeFirst} / 6 counts towards your score)</span>`:''}${scoreList(M)}</div>`:''}
+  <div class="row end"><button class="btn tag" id="next" ${M?'':'disabled'}>Close the case</button></div>`;
+};
+screens[8].wire = () => {
+  const ta=$('#report');
+  ta.addEventListener('input',()=>{ S.writing=ta.value; $('#meter').textContent=wc(ta.value)+' words'; });
+  $('#markbtn').addEventListener('click',()=>{
+    S.writing=ta.value; const M=markEmail(S.writing); S.writeMark=M;
+    if(S.writeFirst==null){ S.writeFirst=M.filter(p=>p.ok).length; M.forEach((p,k)=>{ if(!p.ok) addMistake('w'+k,'Situational writing',p.tip); }); }
+    render();
+  });
+  $('#next').addEventListener('click',()=>{ S.writing=ta.value; go(9); });
+};
+function results(){
+  const comp=(label,keys)=>({label, got:keys.filter(k=>S.first[k]).length, of:keys.length});
+  const rows=[
+    comp('Listening (Paper 3)', LISTEN_QS.map(q=>q.id)),
+    comp('Visual text (Paper 2)', VISUAL_QS.map(q=>q.id)),
+    comp('Grammar cloze (Paper 2)', CLOZE.ans.map((_,i)=>'cloze'+i)),
+    comp('Editing (Paper 2)', EDIT.ans.map((_,i)=>'edit'+i)),
+    comp('Synthesis & transformation (Paper 2)', SYNTH.map((_,i)=>'synth'+i)),
+    ...(SR&&!S.oral.typed?[{label:'Reading aloud (Paper 4)', got:S.oral.read?S.oral.read.score:0, of:4}]:[]),
+    {label:'Oral conversation (Paper 4)', got:S.oral.convo.reduce((a,r)=>a+(r?r.score:0),0), of:12},
+    {label:'Situational writing (Paper 1)', got:S.writeFirst||0, of:6}
+  ];
+  const got=rows.reduce((a,r)=>a+r.got,0), of=rows.reduce((a,r)=>a+r.of,0);
+  const pct=Math.round(got/of*100);
+  const rank= pct>=85?'Inspector': pct>=70?'Sergeant': pct>=50?'Constable':'Rookie';
+  return {rows,got,of,pct,rank};
+}
+function loadHist(){ try{ return JSON.parse(localStorage.getItem(HKEY)||'[]'); }catch(e){ return []; } }
+function saveHist(h){ try{ localStorage.setItem(HKEY, JSON.stringify(h.slice(-30))); }catch(e){} }
+
+screens[9] = () => {
+  const R=results(), mins=Math.max(1,Math.round((Date.now()-S.start)/60000));
+  let hist=loadHist();
+  if(!S.saved){ hist.push({d:new Date().toISOString().slice(0,10), n:S.name, pct:R.pct, rank:R.rank, m:mins, rep:S.rep}); saveHist(hist); S.saved=true; }
+  return `
+  <div class="eyebrow">Case 001 · Closed</div>
+  <span class="stamp">Case closed</span>
+  <h2>${esc(S.name)}, rank: ${R.rank}</h2>
+  <p>You scored <b>${R.got} of ${R.of}</b> (${R.pct}%) on first attempts, with a reputation of <b>${S.rep}</b>. Inspector Wren returns the recipe book to Uncle Lim just in time for the festival.</p>
+  <div class="wren"><span class="who">Inspector Wren</span><p>“Fine work. But Marcus mentioned someone who encouraged him to “borrow” the book. A note signed only with the letter <b>M</b>… We will meet again in Case 002.”</p></div>
+  <h3>How each skill went</h3>
+  <div class="tablewrap"><table><thead><tr><th>Skill</th><th>First try</th><th style="width:30%">Score</th></tr></thead><tbody>
+  ${R.rows.map(r=>{const p=Math.round(r.got/r.of*100); return `<tr><td>${esc(r.label)}</td><td class="n">${r.got} / ${r.of}</td><td><div class="bar"><i class="${p<60?'low':''}" style="width:${p}%"></i></div></td></tr>`;}).join('')}
+  </tbody></table></div>
+  <div class="notebook"><h3>Detective's notebook · rules to remember</h3>
+  ${S.mistakes.length?`<ul>${S.mistakes.map(m=>`<li><b>${esc(m.area)}</b><span class="rule">${esc(m.rule)}</span></li>`).join('')}</ul>`:'<p>No mistakes on this case. Outstanding.</p>'}</div>
+  <h3>Case history on this device</h3>
+  <div class="tablewrap"><table><thead><tr><th>Date</th><th>Detective</th><th>Score</th><th>Rank</th><th>Time</th></tr></thead><tbody>
+  ${hist.slice().reverse().map(h=>`<tr><td>${esc(h.d)}</td><td>${esc(h.n)}</td><td class="n">${h.pct}%</td><td>${esc(h.rank)}</td><td class="n">${h.m} min</td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="row end"><button class="btn ghost" id="again">Play the case again</button></div>`;
+};
+screens[9].wire = () => { $('#again').addEventListener('click',()=>{ S=fresh(); render(); }); };
+
+function render(){
+  const f=screens[S.step]; $('#screen').innerHTML=f(); f.wire&&f.wire(); setActs();
+}
+
+if('speechSynthesis' in window){ try{ speechSynthesis.getVoices(); speechSynthesis.onvoiceschanged=()=>{}; }catch(e){} }
+window.claude?.hot?.snapshot?.(()=>S);
+const start = d => { if(d && typeof d.step==='number') S=Object.assign(fresh(), d); render(); };
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
